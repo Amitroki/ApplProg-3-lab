@@ -87,10 +87,18 @@ class Interface(QMainWindow):
         self.window_image.setAlignment(Qt.AlignCenter)
 
     def option_next(self):
-        self.image = QPixmap(next(self.iterator))
-        self.image = self.image.scaled(1280, 720, QtCore.Qt.KeepAspectRatio)
-        self.window_image.setPixmap(self.image)
-        self.window_image.setAlignment(Qt.AlignCenter)
+        try:
+            self.image = QPixmap(next(self.iterator))
+            self.image = self.image.scaled(1280, 720, QtCore.Qt.KeepAspectRatio)
+            self.window_image.setPixmap(self.image)
+            self.window_image.setAlignment(Qt.AlignCenter)
+        except StopIteration:
+            self.iterator.counter -= 1
+            error = QMessageBox()
+            error.setWindowTitle("Problem")
+            error.setText("This action cannot be performed now")
+            error.setInformativeText("There is no next element")
+            error.exec_()
 
     def option_previous(self):
         try:
