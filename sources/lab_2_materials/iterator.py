@@ -16,7 +16,7 @@ class Iterator:
         This method return absolute path of next element from dataset
         """
         if self.counter < self.limit:
-            absolute_path = os.path.join(self.data, self.folder_element[self.counter])
+            absolute_path = os.path.join(self.data, self.folder_element[self.counter]).replace("\\", "/")
             self.counter += 1
             return absolute_path
         else:
@@ -28,7 +28,7 @@ class Iterator:
         """
         if self.counter > 0:
             self.counter -= 1
-            absolute_path = os.path.join(self.data, self.folder_element[self.counter])
+            absolute_path = os.path.join(self.data, self.folder_element[self.counter]).replace("\\", "/")
             return absolute_path
         else:
             raise StopIteration
