@@ -15,41 +15,42 @@ def make_folder(name: str) -> None:
         os.mkdir(name)
 
 
-def copy_dataset(dataset: str) -> None:
+def copy_dataset(dataset: str, new_dataset_name: str) -> str:
     """
     This function create a copy of dataset with a specified name
     """
-    make_folder("copied_dataset")
-    animal_types = os.listdir(f"dataset")
+    make_folder(new_dataset_name)
+    animal_types = os.listdir(dataset)
     for animal_type in animal_types:
-        animals = os.listdir(os.path.join("dataset", animal_type))
+        animals = os.listdir(os.path.join(dataset, animal_type))
         for animal_photo in animals:
-            shutil.copyfile(os.path.join(os.path.join("dataset", animal_type), animal_photo), os.path.join(
-                "copied_dataset", f"{animal_type}_{animal_photo}"))
+            shutil.copyfile(
+                os.path.join(os.path.join(dataset, animal_type), animal_photo), 
+                os.path.join(new_dataset_name, f"{animal_type}_{animal_photo}")
+            )
+    return os.path.abspath(new_dataset_name)
 
-
-def input_data(file_name: str) -> None:
+def input_data(new_dataset_name: str, file_name: str) -> None:
     """
     This function add file paths from folder into the created csv-file
     """
-    full_path = os.path.abspath("copied_dataset")
-    animals = os.listdir("copied_dataset")
-    relative_path = os.path.relpath("copied_dataset")
+    full_path = os.path.abspath(new_dataset_name)
+    animals = os.listdir(new_dataset_name)
+    counter = 0
+    start = ""
+    for i in new_dataset_name:
+        if i == "/":
+            counter += 1
+        start += i
+        if counter == 5:
+            break
+    relative_path = os.path.relpath(new_dataset_name, start)
+    type = os.path.basename(os.path.normpath(new_dataset_name))
     with open(file_name, "a", newline="") as file:
         file_writer = csv.writer(file, delimiter=",", lineterminator='\r')
         for animal in animals:
             file_writer.writerow(
-                [os.path.join(full_path, animal),
-                 os.path.join(relative_path, animal),
-                 animal]
+                [os.path.join(os.path.abspath(new_dataset_name), animal).replace("\\", "/"),
+                 os.path.join(relative_path, animal).replace("\\", "/"),
+                 type]
             )
-
-
-def main() -> None:
-    copy_dataset("dataset")
-    create_file("annotation2.csv")
-    input_data("annotation2.csv")
-
-
-if __name__ == "__main__":
-    main()
