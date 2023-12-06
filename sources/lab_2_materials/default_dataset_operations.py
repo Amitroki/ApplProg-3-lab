@@ -8,7 +8,6 @@ def input_data(path_to_the_dataset: str, file_name: str) -> None:
     """
     animals1 = os.listdir(os.path.join(path_to_the_dataset, os.listdir(path_to_the_dataset)[0]))
     animals2 = os.listdir(os.path.join(path_to_the_dataset, os.listdir(path_to_the_dataset)[1]))
-    #start = "C:/Users/Alex/Desktop/application_programming/"
     relative_path1 = os.path.relpath(os.path.join(path_to_the_dataset, os.listdir(path_to_the_dataset)[0]), start=path_to_the_dataset)
     relative_path2 = os.path.relpath(os.path.join(path_to_the_dataset, os.listdir(path_to_the_dataset)[1]), start=path_to_the_dataset)
     with open(file_name, "a", newline="") as file:

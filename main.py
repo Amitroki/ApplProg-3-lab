@@ -38,12 +38,16 @@ class WindowWithRequest(QDialog):
     def checking_correctness(self) -> bool:
         for i in self.file_name.text():
             if i in ["<", ">", "«", ":", "#", "%", "&", "{", "}", "\\", "*", "$", "!", "'", "/", "|"]:
-                PopupWindow("Incorrect file name", "Invalid characters are present", "Please, write another name for the file")
+                PopupWindow("Incorrect file name", "Invalid characters are present", "The name is 'default'")
+                self.set_text('default')
                 return False
         return True
 
     def get_text(self) -> str:
         return self.file_name.text()
+    
+    def set_text(self, string: str) -> None:
+        self.file_name.set_text(string)
 
 
 class Interface(QMainWindow):
@@ -85,7 +89,7 @@ class Interface(QMainWindow):
         self.button_1 = QPushButton(text = "Create ordered dataset", clicked = self.copy_dataset)
         self.button_1.setFont(QFont("IMPACT", 18))
 
-        self.button_2 = QPushButton(text = "Create mixed dataset")
+        self.button_2 = QPushButton(text = "Create mixed dataset", clicked=self.mixed_dataset)
         self.button_2.setFont(QFont("IMPACT", 18))
     
         self.button_create_annotation = QtWidgets.QPushButton(text = "Create annotation", clicked = self.create_annotation)
@@ -161,19 +165,24 @@ class Interface(QMainWindow):
     def copy_dataset(self):
         try:
             self.status = "ordered dataset"
-            self.previous1.setEnabled(True)
+            self.previous1.setEnabled(False)
             self.previous2.setEnabled(False)
-            self.next1.setEnabled(True)
+            self.next1.setEnabled(False)
             self.next2.setEnabled(False)
-            self.folderpath = QFileDialog.getExistingDirectory(self, "Select folder", "")
-            self.folderpath = sources.lab_2_materials.united_dataset.copy_dataset(self.folderpath, "new_dataset")
-            self.iterator1 = sources.lab_2_materials.iterator.Iterator(self.folderpath)
-            image_path = next(self.iterator1)
-            self.image = QPixmap(image_path)
+            self.image = QPixmap("sources/images/loading.png")
             self.image = self.image.scaled(1280, 720, QtCore.Qt.KeepAspectRatio)
             self.window_image.setPixmap(self.image)
             self.window_image.setAlignment(Qt.AlignCenter)
-            self.file_path.setText(image_path)
+            self.file_path.setText("The dataset is creating")
+            self.folderpath = QFileDialog.getExistingDirectory(self, "Select folder", "")
+            window = WindowWithRequest("Create the united dataset")
+            self.folderpath1 = QFileDialog.getExistingDirectory(self, "Select folder", "")
+            self.folderpath = sources.lab_2_materials.united_dataset.copy_dataset(self.folderpath, f"{self.folderpath1}/{window.get_text()}")
+            self.image = QPixmap("sources/images/OK.png")
+            self.image = self.image.scaled(1280, 720, QtCore.Qt.KeepAspectRatio)
+            self.window_image.setPixmap(self.image)
+            self.window_image.setAlignment(Qt.AlignCenter)
+            self.file_path.setText(os.path.abspath(f"{self.folderpath1}/{window.get_text()}"))
         except FileNotFoundError:
             PopupWindow("Problem", "This action cannot be performed now", "Please, choose a folder")
             self.choose_folder_button.click()
@@ -181,12 +190,35 @@ class Interface(QMainWindow):
     def mixed_dataset(self):
         try:
             self.status = "mixed dataset"
-            self.previous1.setEnabled(True)
+            self.previous1.setEnabled(False)
             self.previous2.setEnabled(False)
-            self.next1.setEnabled(True)
+            self.next1.setEnabled(False)
             self.next2.setEnabled(False)
-            self.folderpath = sources.lab_2_materials.united_dataset.copy_dataset(self.folderpath, "new_dataset")
-            
+            self.button_change_end.setEnabled(False)
+            self.image = QPixmap("sources/images/loading.png")
+            self.image = self.image.scaled(1280, 720, QtCore.Qt.KeepAspectRatio)
+            self.window_image.setPixmap(self.image)
+            self.window_image.setAlignment(Qt.AlignCenter)
+            self.file_path.setText("The dataset is creating")
+            self.folderpath = QFileDialog.getExistingDirectory(self, "Select folder", "")
+            window = WindowWithRequest("Create the united dataset")
+            self.folderpath1 = QFileDialog.getExistingDirectory(self, "Select folder", "")
+            window1 = WindowWithRequest("Create a csv file")
+            self.folderpath = sources.lab_2_materials.mixed_dataset.copy_and_rename_dataset(self.folderpath, f"{self.folderpath1}/{window.get_text()}", f"{window1.get_text()}")
+            self.image = QPixmap("sources/images/OK.png")
+            self.image = self.image.scaled(1280, 720, QtCore.Qt.KeepAspectRatio)
+            self.window_image.setPixmap(self.image)
+            self.window_image.setAlignment(Qt.AlignCenter)
+            self.file_path.setText(os.path.abspath(f"{self.folderpath1}/{window.get_text()}"))
+        except FileNotFoundError:
+            PopupWindow("Problem", "This action cannot be performed now", "Please, choose a folder")
+            self.choose_folder_button.click()
+        except PermissionError:
+            PopupWindow("Problem", "You chose inappropriate folder", "Please, choose another folder")
+            os.remove(os.path.abspath(f"{self.folderpath1}/{window.get_text()}"))
+            os.remove(os.path.join(os.getcwd(), f"{window1.get_text()}"))
+            self.choose_folder_button.click()
+
     def option_next(self):
         if self.button_change_end.text() == "End":
             try:

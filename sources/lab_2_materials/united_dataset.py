@@ -21,6 +21,9 @@ def copy_dataset(dataset: str, new_dataset_name: str) -> str:
     """
     make_folder(new_dataset_name)
     animal_types = os.listdir(dataset)
+    if os.path.isdir("hidden_files"):
+        shutil.rmtree("hidden_files")
+    os.mkdir("hidden_files")
     for animal_type in animal_types:
         animals = os.listdir(os.path.join(dataset, animal_type))
         for animal_photo in animals:

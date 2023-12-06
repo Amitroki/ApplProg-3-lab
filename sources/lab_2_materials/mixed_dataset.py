@@ -11,7 +11,7 @@ def copy_and_rename_dataset(default_dataset: str, new_dataset_name: str, csv_fil
     """
     This function create a copy of specified dataset
     """
-    random_number = sample(list(range(10000)), 2000)
+    random_number = sample(list(range(10000)), 2500)
     make_folder(new_dataset_name)
     full_path = os.path.abspath(new_dataset_name)
     relative_path = os.path.relpath(new_dataset_name)
