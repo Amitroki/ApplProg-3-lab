@@ -89,8 +89,8 @@ class Interface(QMainWindow):
         self.button_1 = QPushButton(text = "Create ordered dataset", clicked = self.copy_dataset)
         self.button_1.setFont(QFont("IMPACT", 18))
 
-        self.button_2 = QPushButton(text = "Create mixed dataset", clicked=self.mixed_dataset)
-        self.button_2.setFont(QFont("IMPACT", 18))
+        self.button_2 = QPushButton(text = "Create mixed dataset (with annotation)", clicked=self.mixed_dataset)
+        self.button_2.setFont(QFont("IMPACT", 16))
     
         self.button_create_annotation = QtWidgets.QPushButton(text = "Create annotation", clicked = self.create_annotation)
         self.button_create_annotation.setFont(QFont("IMPACT", 15))
@@ -111,6 +111,8 @@ class Interface(QMainWindow):
         self.previous2.setEnabled(False)
         self.next1.setEnabled(False)
         self.next2.setEnabled(False)
+        self.button_create_annotation.setEnabled(False)
+        self.button_change_end.setEnabled(False)
 
         self.file_path = QLabel(self)
         self.file_path.setText("PATH")
@@ -134,7 +136,7 @@ class Interface(QMainWindow):
         self.show()
 
     def create_annotation(self):
-        window = WindowWithRequest("Creating the file")
+        window = WindowWithRequest("Creating the csv file")
         if window.checking_correctness() == True:
             sources.lab_2_materials.default_dataset_operations.create_file(f"{window.get_text()}.csv")
             if self.status == "two folders":
@@ -149,6 +151,8 @@ class Interface(QMainWindow):
             self.previous2.setEnabled(True)
             self.next1.setEnabled(True)
             self.next2.setEnabled(True)
+            self.button_change_end.setEnabled(True)
+            self.button_create_annotation.setEnabled(True)
             self.folderpath = QFileDialog.getExistingDirectory(self, "Select folder", "")
             self.iterator1 = sources.lab_2_materials.iterator.Iterator(os.path.join(self.folderpath, os.listdir(self.folderpath)[0]))
             self.iterator2 = sources.lab_2_materials.iterator.Iterator(os.path.join(self.folderpath, os.listdir(self.folderpath)[1]))
@@ -169,6 +173,8 @@ class Interface(QMainWindow):
             self.previous2.setEnabled(False)
             self.next1.setEnabled(False)
             self.next2.setEnabled(False)
+            self.button_change_end.setEnabled(False)
+            self.button_create_annotation.setEnabled(True)
             self.image = QPixmap("sources/images/loading.png")
             self.image = self.image.scaled(1280, 720, QtCore.Qt.KeepAspectRatio)
             self.window_image.setPixmap(self.image)
@@ -195,15 +201,16 @@ class Interface(QMainWindow):
             self.next1.setEnabled(False)
             self.next2.setEnabled(False)
             self.button_change_end.setEnabled(False)
+            self.button_create_annotation.setEnabled(True)
             self.image = QPixmap("sources/images/loading.png")
             self.image = self.image.scaled(1280, 720, QtCore.Qt.KeepAspectRatio)
             self.window_image.setPixmap(self.image)
             self.window_image.setAlignment(Qt.AlignCenter)
             self.file_path.setText("The dataset is creating")
-            self.folderpath = QFileDialog.getExistingDirectory(self, "Select folder", "")
-            window = WindowWithRequest("Create the united dataset")
-            self.folderpath1 = QFileDialog.getExistingDirectory(self, "Select folder", "")
-            window1 = WindowWithRequest("Create a csv file")
+            self.folderpath = QFileDialog.getExistingDirectory(self, "Select the parent folder", "")
+            window = WindowWithRequest("Create the random dataset")
+            self.folderpath1 = QFileDialog.getExistingDirectory(self, "Select the location of the dataset to be created", "")
+            window1 = WindowWithRequest("Create the annotation for random dataset")
             self.folderpath = sources.lab_2_materials.mixed_dataset.copy_and_rename_dataset(self.folderpath, f"{self.folderpath1}/{window.get_text()}", f"{window1.get_text()}")
             self.image = QPixmap("sources/images/OK.png")
             self.image = self.image.scaled(1280, 720, QtCore.Qt.KeepAspectRatio)
@@ -211,13 +218,10 @@ class Interface(QMainWindow):
             self.window_image.setAlignment(Qt.AlignCenter)
             self.file_path.setText(os.path.abspath(f"{self.folderpath1}/{window.get_text()}"))
         except FileNotFoundError:
-            PopupWindow("Problem", "This action cannot be performed now", "Please, choose a folder")
-            self.choose_folder_button.click()
+            PopupWindow("Problem", "This action cannot be performed now", "Please, choose another a folder")
         except PermissionError:
             PopupWindow("Problem", "You chose inappropriate folder", "Please, choose another folder")
-            os.remove(os.path.abspath(f"{self.folderpath1}/{window.get_text()}"))
-            os.remove(os.path.join(os.getcwd(), f"{window1.get_text()}"))
-            self.choose_folder_button.click()
+            shutil.rmtree(f"{self.folderpath1}/{window.get_text()}")
 
     def option_next(self):
         if self.button_change_end.text() == "End":
