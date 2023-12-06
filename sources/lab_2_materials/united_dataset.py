@@ -30,27 +30,17 @@ def copy_dataset(dataset: str, new_dataset_name: str) -> str:
             )
     return os.path.abspath(new_dataset_name)
 
-def input_data(new_dataset_name: str, file_name: str) -> None:
+def input_data(path_to_the_dataset: str, file_name: str) -> None:
     """
     This function add file paths from folder into the created csv-file
     """
-    full_path = os.path.abspath(new_dataset_name)
-    animals = os.listdir(new_dataset_name)
-    counter = 0
-    start = ""
-    for i in new_dataset_name:
-        if i == "/":
-            counter += 1
-        start += i
-        if counter == 5:
-            break
-    relative_path = os.path.relpath(new_dataset_name, start)
-    type = os.path.basename(os.path.normpath(new_dataset_name))
+    animals = os.listdir(path_to_the_dataset)
+    relative_path = os.path.relpath(path_to_the_dataset, start=os.path.dirname(path_to_the_dataset))
     with open(file_name, "a", newline="") as file:
         file_writer = csv.writer(file, delimiter=",", lineterminator='\r')
         for animal in animals:
             file_writer.writerow(
-                [os.path.join(os.path.abspath(new_dataset_name), animal).replace("\\", "/"),
-                 os.path.join(relative_path, animal).replace("\\", "/"),
-                 type]
+                [os.path.join(path_to_the_dataset, animal).replace("\\", "/"),
+                os.path.join(relative_path, animal).replace("\\","/"),
+                animal.replace(animal[-9:], "")]
             )

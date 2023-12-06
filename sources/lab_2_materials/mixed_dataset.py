@@ -7,23 +7,23 @@ from random import sample
 from sources.lab_2_materials.united_dataset import create_file, make_folder
 
 
-def copy_and_rename_dataset() -> None:
+def copy_and_rename_dataset(default_dataset: str, new_dataset_name: str, csv_file_name: str) -> None:
     """
     This function create a copy of specified dataset
     """
-    random_number = sample(list(range(10000)), 5000)
-    make_folder("second_copied_dataset")
-    full_path = os.path.abspath("second_copied_dataset")
-    relative_path = os.path.relpath("second_copied_dataset")
-    animal_types = os.listdir("dataset")
+    random_number = sample(list(range(10000)), 2000)
+    make_folder(new_dataset_name)
+    full_path = os.path.abspath(new_dataset_name)
+    relative_path = os.path.relpath(new_dataset_name)
+    animal_types = os.listdir(default_dataset)
     counter = 0
     for animal_type in animal_types:
-        animals = os.listdir(os.path.join("dataset", animal_type))
+        animals = os.listdir(os.path.join(default_dataset, animal_type))
         for animal_photo in animals:
             random_name = str(random_number[counter]).zfill(5)
-            shutil.copyfile(os.path.join(os.path.join("dataset", animal_type), animal_photo),
-                            os.path.join("second_copied_dataset", random_name + ".jpg"))
-            with open("annotation3.csv", 'a', newline='') as file:
+            shutil.copyfile(os.path.join(os.path.join(default_dataset, animal_type), animal_photo),
+                            os.path.join(new_dataset_name, random_name + ".jpg"))
+            with open(f"{csv_file_name}.csv", 'a', newline='') as file:
                 file_writer = csv.writer(
                     file, delimiter=",", lineterminator='\r')
                 file_writer.writerow(
