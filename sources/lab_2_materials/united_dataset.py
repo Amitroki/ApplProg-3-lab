@@ -3,7 +3,7 @@ import shutil
 import csv
 
 
-from sources.lab_2_materials.default_dataset_operations import create_file
+from default_dataset_operations import create_file
 
 
 def make_folder(name: str) -> None:
@@ -25,22 +25,24 @@ def copy_dataset(dataset: str, new_dataset_name: str) -> str:
         animals = os.listdir(os.path.join(dataset, animal_type))
         for animal_photo in animals:
             shutil.copyfile(
-                os.path.join(os.path.join(dataset, animal_type), animal_photo), 
+                os.path.join(os.path.join(dataset, animal_type), animal_photo),
                 os.path.join(new_dataset_name, f"{animal_type}_{animal_photo}")
             )
     return os.path.abspath(new_dataset_name)
+
 
 def input_data(path_to_the_dataset: str, file_name: str) -> None:
     """
     This function add file paths from folder into the created csv-file
     """
     animals = os.listdir(path_to_the_dataset)
-    relative_path = os.path.relpath(path_to_the_dataset, start=os.path.dirname(path_to_the_dataset))
+    relative_path = os.path.relpath(
+        path_to_the_dataset, start=os.path.dirname(path_to_the_dataset))
     with open(file_name, "a", newline="") as file:
         file_writer = csv.writer(file, delimiter=",", lineterminator='\r')
         for animal in animals:
             file_writer.writerow(
                 [os.path.join(path_to_the_dataset, animal).replace("\\", "/"),
-                os.path.join(relative_path, animal).replace("\\","/"),
-                animal.replace(animal[-9:], "")]
+                 os.path.join(relative_path, animal).replace("\\", "/"),
+                 animal.replace(animal[-9:], "")]
             )
