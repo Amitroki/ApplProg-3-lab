@@ -3,13 +3,16 @@ import shutil
 import csv
 
 
-from default_dataset_operations import create_file
+from sources.lab_2_materials.default_dataset_operations import create_file
 
 
 def make_folder(name: str) -> None:
-    """
+    """   
     This function create a new folder with specified by user name
     if it is not exist. If the folder exists, function do nothing
+
+    Args:
+        name (str): name of creating folder
     """
     if not os.path.isdir(name):
         os.mkdir(name)
@@ -18,6 +21,13 @@ def make_folder(name: str) -> None:
 def copy_dataset(dataset: str, new_dataset_name: str) -> str:
     """
     This function create a copy of dataset with a specified name
+
+    Args:
+        dataset (str): path to default dataset
+        new_dataset_name (str): path to the new dataset
+
+    Returns:
+        str: path to the new dataset
     """
     make_folder(new_dataset_name)
     animal_types = os.listdir(dataset)
@@ -34,6 +44,10 @@ def copy_dataset(dataset: str, new_dataset_name: str) -> str:
 def input_data(path_to_the_dataset: str, file_name: str) -> None:
     """
     This function add file paths from folder into the created csv-file
+
+    Args:
+        path_to_the_dataset (str): path to the created dataset
+        file_name (str): name of csv-file 
     """
     animals = os.listdir(path_to_the_dataset)
     relative_path = os.path.relpath(

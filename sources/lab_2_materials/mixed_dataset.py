@@ -4,12 +4,20 @@ import csv
 from random import sample
 
 
-from united_dataset import create_file, make_folder
+from sources.lab_2_materials.united_dataset import create_file, make_folder
 
 
 def copy_and_rename_dataset(default_dataset: str, new_dataset_name: str, csv_file_name: str) -> str:
-    """
+    """    
     This function create a copy of specified dataset
+
+    Args:
+        default_dataset (str): path to the default dataset
+        new_dataset_name (str): path to the new dataset with pictures in random prder
+        csv_file_name (str): name of csv-file which will contain the data of the new dataset
+
+    Returns:
+        str: path to tne new dataset
     """
     random_number = sample(list(range(10000)), 2500)
     make_folder(new_dataset_name)
@@ -30,7 +38,7 @@ def copy_and_rename_dataset(default_dataset: str, new_dataset_name: str, csv_fil
             for animal in animals:
                 file_writer.writerow(
                     [os.path.join(new_dataset_name, animal).replace("\\", "/"),
-                     os.path.join(relative_path, animal).replace("\\", "/"),
+                     os.path.join(os.path.normpath(relative_path), animal).replace("\\", "/"),
                      animal_type]
                 )
 

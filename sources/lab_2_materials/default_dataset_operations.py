@@ -5,6 +5,10 @@ import csv
 def input_data(path_to_the_dataset: str, file_name: str) -> None:
     """
     This function add file paths from folder into the created csv-file
+
+    Args:
+        path_to_the_dataset (str): path of default dataset
+        file_name (str): name of csv-file
     """
     animals1 = os.listdir(os.path.join(
         path_to_the_dataset, os.listdir(path_to_the_dataset)[0]))
@@ -33,6 +37,9 @@ def input_data(path_to_the_dataset: str, file_name: str) -> None:
 def create_file(file_name: str) -> None:
     """
     This function create a new csv-file (or rewrite existed) with specified by user name
+
+    Args:
+        file_name (str): name of creating datasset
     """
     with open(file_name, 'w') as file:
         file_writer = csv.writer(file, delimiter=",", lineterminator="\r")

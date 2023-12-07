@@ -35,10 +35,14 @@ class WindowWithRequest(QDialog):
         """
         Constructor of WindowWithRequest class, which inherits methods of QDialog,
         prompts the user to enter a string for various purposes (which are explained in the header)
+
+        Args:
+            title (str): a title of creating window
         """
         self.request_window = QDialog()
         self.title = title
         self.request_window.setWindowTitle(self.title)
+        self.request_window.setWindowIcon(QIcon("sources/images/icon.png"))
         self.request_window.setFixedSize(300, 100)
         self.file_name = QLineEdit(self.request_window)
         self.window_layout = QVBoxLayout(self.request_window)
@@ -68,6 +72,9 @@ class WindowWithRequest(QDialog):
         """
         Method of WindowWithRequest class, which allows you to specifically change the text 
         entered by the user in a non-standard situation
+
+        Args:
+            string (str): string with a new text
         """
         self.file_name.set_text(string)
 
@@ -175,16 +182,20 @@ class Interface(QMainWindow):
         button for the dataset; creates annotations for the default dataset and the combined one, 
         the annotation for the random dataset is created by another button
         """
-        window = WindowWithRequest("Creating the csv file")
-        if window.checking_correctness() == True:
-            sources.lab_2_materials.default_dataset_operations.create_file(
-                f"{window.get_text()}.csv")
-            if self.status == "two folders":
-                sources.lab_2_materials.default_dataset_operations.input_data(
-                    self.folderpath, f"{window.get_text()}.csv")
-            if self.status == "ordered dataset":
-                sources.lab_2_materials.united_dataset.input_data(
-                    self.folderpath, f"{window.get_text()}.csv")
+        try:
+            window = WindowWithRequest("Creating the csv file")
+            if window.checking_correctness() == True:
+                sources.lab_2_materials.default_dataset_operations.create_file(
+                    f"{window.get_text()}.csv")
+                if self.status == "two folders":
+                    sources.lab_2_materials.default_dataset_operations.input_data(
+                        self.folderpath, f"{window.get_text()}.csv")
+                if self.status == "ordered dataset":
+                    sources.lab_2_materials.united_dataset.input_data(
+                        self.folderpath, f"{window.get_text()}.csv")
+        except AttributeError:
+            self.button_create_annotation.click()
+            
 
     def choose_folder(self) -> None:
         """
@@ -208,6 +219,16 @@ class Interface(QMainWindow):
                 os.path.join(self.folderpath, os.listdir(self.folderpath)[1]))
             image_path = next(self.iterator1)
             self.image = QPixmap(image_path)
+            if not image_path.endswith(".jpg"):
+                PopupWindow("Problem", "This action cannot be performed now",
+                            "Please, choose another folder")
+                self.previous1.setEnabled(False)
+                self.previous2.setEnabled(False)
+                self.next1.setEnabled(False)
+                self.next2.setEnabled(False)
+                self.button_change_end.setEnabled(False)
+                self.button_create_annotation.setEnabled(False)
+                self.image = QPixmap("sources/images/occasion.png")
             self.image = self.image.scaled(
                 1280, 720, QtCore.Qt.KeepAspectRatio)
             self.window_image.setPixmap(self.image)
@@ -216,6 +237,26 @@ class Interface(QMainWindow):
         except FileNotFoundError:
             PopupWindow("Problem", "This action cannot be performed now",
                         "Please, choose another folder")
+            self.previous1.setEnabled(False)
+            self.previous2.setEnabled(False)
+            self.next1.setEnabled(False)
+            self.next2.setEnabled(False)
+            self.button_change_end.setEnabled(False)
+            self.button_create_annotation.setEnabled(False)
+            self.image = QPixmap("sources/images/occasion.png")
+            self.image = self.image.scaled(
+                1280, 720, QtCore.Qt.KeepAspectRatio)
+            self.window_image.setPixmap(self.image)
+            self.window_image.setAlignment(Qt.AlignCenter)
+        except NotADirectoryError:
+            PopupWindow("Problem", "This action cannot be performed now",
+                        "Please, choose another folder")
+            self.previous1.setEnabled(False)
+            self.previous2.setEnabled(False)
+            self.next1.setEnabled(False)
+            self.next2.setEnabled(False)
+            self.button_change_end.setEnabled(False)
+            self.button_create_annotation.setEnabled(False)
             self.image = QPixmap("sources/images/occasion.png")
             self.image = self.image.scaled(
                 1280, 720, QtCore.Qt.KeepAspectRatio)
@@ -319,6 +360,20 @@ class Interface(QMainWindow):
                 1280, 720, QtCore.Qt.KeepAspectRatio)
             self.window_image.setPixmap(self.image)
             self.window_image.setAlignment(Qt.AlignCenter)
+        except NotADirectoryError:
+            PopupWindow("Problem", "This action cannot be performed now",
+                        "Please, choose another folder")
+            self.previous1.setEnabled(False)
+            self.previous2.setEnabled(False)
+            self.next1.setEnabled(False)
+            self.next2.setEnabled(False)
+            self.button_change_end.setEnabled(False)
+            self.button_create_annotation.setEnabled(False)
+            self.image = QPixmap("sources/images/occasion.png")
+            self.image = self.image.scaled(
+                1280, 720, QtCore.Qt.KeepAspectRatio)
+            self.window_image.setPixmap(self.image)
+            self.window_image.setAlignment(Qt.AlignCenter)
         except PermissionError:
             PopupWindow("Problem", "You chose inappropriate folder",
                         "Please, choose another folder")
@@ -339,6 +394,16 @@ class Interface(QMainWindow):
             try:
                 image_path = next(self.iterator1)
                 self.image = QPixmap(image_path)
+                if not image_path.endswith(".jpg"):
+                    PopupWindow("Problem", "This action cannot be performed now",
+                                "Please, choose another folder")
+                    self.previous1.setEnabled(False)
+                    self.previous2.setEnabled(False)
+                    self.next1.setEnabled(False)
+                    self.next2.setEnabled(False)
+                    self.button_change_end.setEnabled(False)
+                    self.button_create_annotation.setEnabled(False)
+                    self.image = QPixmap("sources/images/occasion.png")
                 self.image = self.image.scaled(
                     1280, 720, QtCore.Qt.KeepAspectRatio)
                 self.window_image.setPixmap(self.image)
@@ -355,6 +420,16 @@ class Interface(QMainWindow):
             try:
                 image_path = next(self.iterator1)
                 self.image = QPixmap(image_path)
+                if not image_path.endswith(".jpg"):
+                    PopupWindow("Problem", "This action cannot be performed now",
+                                "Please, choose another folder")
+                    self.previous1.setEnabled(False)
+                    self.previous2.setEnabled(False)
+                    self.next1.setEnabled(False)
+                    self.next2.setEnabled(False)
+                    self.button_change_end.setEnabled(False)
+                    self.button_create_annotation.setEnabled(False)
+                    self.image = QPixmap("sources/images/occasion.png")
                 self.image = self.image.scaled(
                     1280, 720, QtCore.Qt.KeepAspectRatio)
                 self.window_image.setPixmap(self.image)
@@ -380,6 +455,16 @@ class Interface(QMainWindow):
             try:
                 image_path = next(self.iterator2)
                 self.image = QPixmap(image_path)
+                if not image_path.endswith(".jpg"):
+                    PopupWindow("Problem", "This action cannot be performed now",
+                                "Please, choose another folder")
+                    self.previous1.setEnabled(False)
+                    self.previous2.setEnabled(False)
+                    self.next1.setEnabled(False)
+                    self.next2.setEnabled(False)
+                    self.button_change_end.setEnabled(False)
+                    self.button_create_annotation.setEnabled(False)
+                    self.image = QPixmap("sources/images/occasion.png")
                 self.image = self.image.scaled(
                     1280, 720, QtCore.Qt.KeepAspectRatio)
                 self.window_image.setPixmap(self.image)
@@ -396,6 +481,16 @@ class Interface(QMainWindow):
             try:
                 image_path = next(self.iterator2)
                 self.image = QPixmap(image_path)
+                if not image_path.endswith(".jpg"):
+                    PopupWindow("Problem", "This action cannot be performed now",
+                                "Please, choose another folder")
+                    self.previous1.setEnabled(False)
+                    self.previous2.setEnabled(False)
+                    self.next1.setEnabled(False)
+                    self.next2.setEnabled(False)
+                    self.button_change_end.setEnabled(False)
+                    self.button_create_annotation.setEnabled(False)
+                    self.image = QPixmap("sources/images/occasion.png")
                 self.image = self.image.scaled(
                     1280, 720, QtCore.Qt.KeepAspectRatio)
                 self.window_image.setPixmap(self.image)
@@ -421,6 +516,16 @@ class Interface(QMainWindow):
             try:
                 image_path = self.iterator1.previous()
                 self.image = QPixmap(image_path)
+                if not image_path.endswith(".jpg"):
+                    PopupWindow("Problem", "This action cannot be performed now",
+                                "Please, choose another folder")
+                    self.previous1.setEnabled(False)
+                    self.previous2.setEnabled(False)
+                    self.next1.setEnabled(False)
+                    self.next2.setEnabled(False)
+                    self.button_change_end.setEnabled(False)
+                    self.button_create_annotation.setEnabled(False)
+                    self.image = QPixmap("sources/images/occasion.png")
                 self.image = self.image.scaled(
                     1280, 720, QtCore.Qt.KeepAspectRatio)
                 self.window_image.setPixmap(self.image)
@@ -437,6 +542,16 @@ class Interface(QMainWindow):
             try:
                 image_path = self.iterator1.previous()
                 self.image = QPixmap(image_path)
+                if not image_path.endswith(".jpg"):
+                    PopupWindow("Problem", "This action cannot be performed now",
+                                "Please, choose another folder")
+                    self.previous1.setEnabled(False)
+                    self.previous2.setEnabled(False)
+                    self.next1.setEnabled(False)
+                    self.next2.setEnabled(False)
+                    self.button_change_end.setEnabled(False)
+                    self.button_create_annotation.setEnabled(False)
+                    self.image = QPixmap("sources/images/occasion.png")
                 self.image = self.image.scaled(
                     1280, 720, QtCore.Qt.KeepAspectRatio)
                 self.window_image.setPixmap(self.image)
@@ -462,6 +577,16 @@ class Interface(QMainWindow):
             try:
                 image_path = self.iterator2.previous()
                 self.image = QPixmap(image_path)
+                if not image_path.endswith(".jpg"):
+                    PopupWindow("Problem", "This action cannot be performed now",
+                                "Please, choose another folder")
+                    self.previous1.setEnabled(False)
+                    self.previous2.setEnabled(False)
+                    self.next1.setEnabled(False)
+                    self.next2.setEnabled(False)
+                    self.button_change_end.setEnabled(False)
+                    self.button_create_annotation.setEnabled(False)
+                    self.image = QPixmap("sources/images/occasion.png")
                 self.image = self.image.scaled(
                     1280, 720, QtCore.Qt.KeepAspectRatio)
                 self.window_image.setPixmap(self.image)
@@ -478,6 +603,16 @@ class Interface(QMainWindow):
             try:
                 image_path = self.iterator2.previous()
                 self.image = QPixmap(image_path)
+                if not image_path.endswith(".jpg"):
+                    PopupWindow("Problem", "This action cannot be performed now",
+                                "Please, choose another folder")
+                    self.previous1.setEnabled(False)
+                    self.previous2.setEnabled(False)
+                    self.next1.setEnabled(False)
+                    self.next2.setEnabled(False)
+                    self.button_change_end.setEnabled(False)
+                    self.button_create_annotation.setEnabled(False)
+                    self.image = QPixmap("sources/images/occasion.png")
                 self.image = self.image.scaled(
                     1280, 720, QtCore.Qt.KeepAspectRatio)
                 self.window_image.setPixmap(self.image)
